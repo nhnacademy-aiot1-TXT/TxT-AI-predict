@@ -33,7 +33,6 @@ if __name__ == '__main__':
     token = get_token(AUTH_URL)
     print(json.dumps(token, indent=4))
 
-
 # In[ ]:
 
 import os
