@@ -45,7 +45,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         source: "."
-        target: "~/"
+        target: "~/python"
         rm: false
         
     - name: execute shell script
