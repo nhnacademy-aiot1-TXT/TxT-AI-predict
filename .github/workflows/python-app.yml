@@ -44,7 +44,7 @@ jobs:
         username: ${{ secrets.SSH_ID }}
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
-        source: "~/final-project-iot/predict.py"
+        source: "/home/ljh/final-project-iot/predict.py"
         target: "~/python"
         rm: false
         
