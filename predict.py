@@ -85,7 +85,6 @@ while True:
 
 # In[ ]:
 
-
 import json
 import pika
 import joblib
