@@ -157,6 +157,3 @@ channel.basic_consume(queue='txt.predict.queue', on_message_callback=callback, a
 # 메시지 소비 시작
 print(' [*] Waiting for messages. To exit press CTRL+C')
 channel.start_consuming()
-
-
-# %%
