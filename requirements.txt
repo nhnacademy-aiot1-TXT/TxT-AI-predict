@@ -3,3 +3,4 @@ requests
 joblib
 pika
 scikit-learn
+aiohttp
