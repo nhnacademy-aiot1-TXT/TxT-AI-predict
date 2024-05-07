@@ -26,15 +26,21 @@ RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
 credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
 connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST, credentials=credentials))
 channel = connection.channel()
-channel.queue_declare(queue='test', durable=True)
+channel.queue_declare(queue='txt.predict.queue', durable=True)
 print("RabbitMQ에 연결됨")
 
 # 공유 변수 (모델 객체)
 model = None
 
 class Auth:
+    """인증 관련 클래스"""
     @staticmethod
     async def get_token():
+        """토큰을 가져오는 비동기 메서드
+
+        Returns:
+            dict: 토큰 정보가 포함된 딕셔너리
+        """
         token_url = AUTH_URL + '/tokens'
         req_body = {
             'auth': {
@@ -51,8 +57,14 @@ class Auth:
                 return await response.json()
 
 class ObjectService:
+    """객체 스토리지 관련 클래스"""
     @staticmethod
     async def load_model():
+        """모델을 로드하는 비동기 메서드
+
+        Returns:
+            object: 로드된 모델 객체
+        """
         print("새 모델 로드...")
         token = await Auth.get_token()
         TOKEN_ID = token['access']['token']['id']
@@ -66,7 +78,16 @@ class ObjectService:
                 return joblib.load(model_bytes)
 
 class Message:
+    """메시지 처리 관련 클래스"""
     def callback(ch, method, properties, body):
+        """메시지 콜백 함수
+
+        Args:
+            ch (pika.channel.Channel): RabbitMQ 채널 객체
+            method (pika.spec.Basic.Deliver): 배달 메서드
+            properties (pika.spec.BasicProperties): 메시지 속성
+            body (bytes): 메시지 내용
+        """
         async def process_message():
             global model  # 전역 변수 model 사용
             message = body.decode('utf-8')
@@ -119,15 +140,16 @@ class Message:
         asyncio.run(process_message())
 
     # 콜백 함수를 채널에 등록
-    channel.basic_consume(queue='test', on_message_callback=callback, auto_ack=False)
+    channel.basic_consume(queue='txt.predict.queue', on_message_callback=callback, auto_ack=False)
 
 async def load_model_periodically():
-    global model  # 전역 변수 model 사용
+    """주기적으로 모델을 로드하는 비동기 함수"""
+    global model
 
     while True:
         # 매일 오전 12:30에 모델 로드
         now = datetime.now()
-        load_time = now.replace(hour=12, minute=30)
+        load_time = now.replace(hour=0, minute=30)
 
         if now >= load_time:
             load_time += timedelta(days=1)
@@ -140,10 +162,9 @@ async def load_model_periodically():
         print(f"{datetime.now()} 새 모델 로드 완료")
 
 async def main():
-    # 모델 로드 태스크 생성
+    """메인 비동기 함수"""
     task_load_model = asyncio.create_task(load_model_periodically())
 
-    # RabbitMQ 콜백 태스크 생성
     task_callback = asyncio.create_task(asyncio.to_thread(channel.start_consuming))
 
     # 두 태스크 모두 완료될 때까지 대기
