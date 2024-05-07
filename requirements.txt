@@ -1,6 +1,6 @@
-pandas
-requests
-joblib
 pika
-scikit-learn
+pandas
+joblib
 aiohttp
+requests
+scikit-learn
