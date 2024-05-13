@@ -35,8 +35,8 @@ logger.addHandler(console_handler)
 credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
 connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST, credentials=credentials))
 channel = connection.channel()
-channel.queue_declare(queue='test', durable=True)  #txt.predict.queue
-print("RabbitMQ에 연결됨")
+channel.queue_declare(queue='txt.predict.queue', durable=True)
+logger.info("RabbitMQ에 연결됨")
 
 # 공유 변수
 model = None
@@ -134,7 +134,7 @@ class Message:
 
                 predictions = model.predict(data)
 
-                # 0,1 결과를 에어컨 ON/OFF로 변환
+                # 0,1 결과를 ON/OFF로 변환
                 if predictions[0] == 0:
                     result = "OFF"
                 else:
@@ -152,7 +152,7 @@ class Message:
             ch.basic_ack(delivery_tag=method.delivery_tag)
         asyncio.run(process_message())
 
-    channel.basic_consume(queue='test', on_message_callback=callback, auto_ack=False)
+    channel.basic_consume(queue='txt.predict.queue', on_message_callback=callback, auto_ack=False)
 
 async def load_model_periodically():
     """매일 00:30에 새 모델을 로드하는 비동기 함수"""
@@ -181,7 +181,7 @@ async def main():
     try:
         global model
         model = await ObjectService.load_model()
-        logging.info(f"{datetime.now()} 실행시 초기 모델 로드")
+        logging.info(f"{datetime.now()} 초기 모델 로드")
     except Exception as e:
         logging.error(f"초기 모델 로드 중 오류 발생: {str(e)}")
     task_load_model = asyncio.create_task(load_model_periodically())
