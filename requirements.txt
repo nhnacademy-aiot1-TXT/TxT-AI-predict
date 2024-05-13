@@ -4,3 +4,4 @@ joblib
 aiohttp
 requests
 scikit-learn
+nest_asyncio
