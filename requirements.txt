@@ -1,7 +1,8 @@
-pika
+redis
 pandas
 joblib
 aiohttp
+aio-pika
 requests
 scikit-learn
 nest_asyncio
