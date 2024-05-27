@@ -4,5 +4,6 @@ joblib
 aiohttp
 aio-pika
 requests
+apscheduler
 scikit-learn
 nest_asyncio
