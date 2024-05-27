@@ -19,7 +19,7 @@ async def main():
     """
     비동기 함수로, 초기 모델을 로드하고 RabbitMQ에서 데이터 처리를 시작합니다.
     """
-    # 모델을 비동기적으로 로드합니다.
+    # 프로그램 실행시 초기 모델을 비동기적으로 로드합니다.
     model_list = await load_model()
     if model_list:
         print("모든 초기 모델 로드")
