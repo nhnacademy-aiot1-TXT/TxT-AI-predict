@@ -37,6 +37,20 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
+    - name : env file
+      env:
+        RABBITMQ_USER: ${{ secrets.RABBITMQ_USER }}
+        RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
+        RABBITMQ_HOST: ${{ secrets.RABBITMQ_HOST }}
+        RABBITMQ_CONSUME_QUEUE: ${{ secrets.RABBITMQ_CONSUME_QUEUE }}
+        REDIS_HOST: ${{ secrets.REDIS_HOST }}
+        REDIS_PORT: ${{ secrets.REDIS_PORT }}
+        REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+        TENANT_ID: ${{ secrets.TENANT_ID }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        STORAGE_URL: ${{ secrets.STORAGE_URL }}
+        
     - name : upload file
       uses: appleboy/scp-action@master
       with:
@@ -57,15 +71,4 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script_stop: true
         script: "~/startup.sh"
-      env:
-        RABBITMQ_USER: ${{ secrets.RABBITMQ_USER }}
-        RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
-        RABBITMQ_HOST: ${{ secrets.RABBITMQ_HOST }}
-        RABBITMQ_CONSUME_QUEUE: ${{ secrets.RABBITMQ_CONSUME_QUEUE }}
-        REDIS_HOST: ${{ secrets.REDIS_HOST }}
-        REDIS_PORT: ${{ secrets.REDIS_PORT }}
-        REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-        TENANT_ID: ${{ secrets.TENANT_ID }}
-        USERNAME: ${{ secrets.USERNAME }}
-        PASSWORD: ${{ secrets.PASSWORD }}
-        STORAGE_URL: ${{ secrets.STORAGE_URL }}
+      
