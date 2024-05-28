@@ -10,32 +10,27 @@
     load_model_periodically: 모델을 주기적으로 로드하는 비동기 함수입니다.
     main: 메인 비동기 함수로, 모델을 주기적으로 로드합니다.
 """
-import os
+
 import io
 import joblib
 import logging
 import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from config import TENANT_ID, USERNAME, PASSWORD, STORAGE_URL, AUTH_URL
+from config import TENANT_ID, USERNAME, PASSWORD, STORAGE_URL
 import nest_asyncio
 
 nest_asyncio.apply()
 
 CONTAINER_NAME = 'TxT-model'
-
-# 환경 변수 로딩
-TENANT_ID = os.environ.get('TENANT_ID')
-USERNAME = os.environ.get('USERNAME')
-PASSWORD = os.environ.get('PASSWORD')
-STORAGE_URL = os.environ.get('STORAGE_URL')
 AUTH_URL = 'https://api-identity-infrastructure.nhncloudservice.com/v2.0'
 
-# 환경 변수 출력
-logging.basicConfig(level=logging.INFO)
-logging.info(f'TENANT_ID: {TENANT_ID}')
-logging.info(f'USERNAME: {USERNAME}')
-logging.info(f'PASSWORD: {PASSWORD}')
-logging.info(f'STORAGE_URL: {STORAGE_URL}')
+#콘솔 로그 생성 및 설정
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
 
 async def get_token():
     """
@@ -55,9 +50,22 @@ async def get_token():
         }
     }
     async with aiohttp.ClientSession() as session:
-        async with session.post(token_url, json=req_body) as response:
-            response.raise_for_status()
-            return await response.json()
+        try:
+            async with session.post(token_url, json=req_body) as response:
+                logging.info("Request body: %s", req_body)
+                logging.info("Request URL: %s", token_url)
+                logging.info("Response status: %s", response.status)
+                response.raise_for_status()
+                response_json = await response.json()
+                logging.info("Response JSON: %s", response_json)
+                return response_json
+        except aiohttp.ClientResponseError as e:
+            logging.error("ClientResponseError: %s", e)
+            logging.error("Response text: %s", await response.text())
+            raise
+        except Exception as e:
+            logging.error("Exception: %s", e)
+            raise
 
 async def get_object_list(token_id, container_name):
     """
