@@ -10,9 +10,10 @@
     load_model_periodically: 모델을 주기적으로 로드하는 비동기 함수입니다.
     main: 메인 비동기 함수로, 모델을 주기적으로 로드합니다.
 """
-
+import os
 import io
 import joblib
+import logging
 import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from config import TENANT_ID, USERNAME, PASSWORD, STORAGE_URL, AUTH_URL
@@ -21,6 +22,20 @@ import nest_asyncio
 nest_asyncio.apply()
 
 CONTAINER_NAME = 'TxT-model'
+
+# 환경 변수 로딩
+TENANT_ID = os.environ.get('TENANT_ID')
+USERNAME = os.environ.get('USERNAME')
+PASSWORD = os.environ.get('PASSWORD')
+STORAGE_URL = os.environ.get('STORAGE_URL')
+AUTH_URL = 'https://api-identity-infrastructure.nhncloudservice.com/v2.0'
+
+# 환경 변수 출력
+logging.basicConfig(level=logging.INFO)
+logging.info(f'TENANT_ID: {TENANT_ID}')
+logging.info(f'USERNAME: {USERNAME}')
+logging.info(f'PASSWORD: {PASSWORD}')
+logging.info(f'STORAGE_URL: {STORAGE_URL}')
 
 async def get_token():
     """
