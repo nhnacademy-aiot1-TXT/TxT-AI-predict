@@ -14,6 +14,7 @@
 import io
 import joblib
 import aiohttp
+import logging
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from config import TENANT_ID, USERNAME, PASSWORD, STORAGE_URL, AUTH_URL
 import nest_asyncio
@@ -21,6 +22,14 @@ import nest_asyncio
 nest_asyncio.apply()
 
 CONTAINER_NAME = 'TxT-model'
+
+#콘솔 로그 생성 및 설정
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
 
 async def get_token():
     """
@@ -41,8 +50,14 @@ async def get_token():
     }
     async with aiohttp.ClientSession() as session:
         async with session.post(token_url, json=req_body) as response:
-            response.raise_for_status()
-            return await response.json()
+            try:
+                response.raise_for_status()
+                return await response.json()
+            except aiohttp.ClientResponseError as e:
+                error_message = await response.text()
+                logging.error(f"HTTP error occurred: {e.status}, {e.message}, URL: {e.request_info.url}")
+                logging.error(f"Response text: {error_message}")
+                raise
 
 async def get_object_list(token_id, container_name):
     """
