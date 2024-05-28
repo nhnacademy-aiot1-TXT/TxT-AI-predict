@@ -13,6 +13,7 @@
 
 import io
 import joblib
+import asyncio
 import aiohttp
 import logging
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -48,16 +49,27 @@ async def get_token():
             }
         }
     }
-    async with aiohttp.ClientSession() as session:
-        async with session.post(token_url, json=req_body) as response:
-            try:
-                response.raise_for_status()
-                return await response.json()
-            except aiohttp.ClientResponseError as e:
-                error_message = await response.text()
-                logging.error(f"HTTP error occurred: {e.status}, {e.message}, URL: {e.request_info.url}")
-                logging.error(f"Response text: {error_message}")
-                raise
+    for attempt in range(3):  # 최대 3회 재시도
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(token_url, json=req_body, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                    if response.status == 200:
+                        return await response.json()
+                    else:
+                        error_message = await response.text()
+                        logging.error(f"HTTP error occurred: {response.status}, URL: {response.url}")
+                        logging.error(f"Response text: {error_message}")
+                        response.raise_for_status()  # 4xx, 5xx 에러 발생 시 예외 발생
+        except aiohttp.ClientResponseError as e:
+            logging.error(f"Attempt {attempt + 1}: HTTP error occurred: {e.status}, {e.message}, URL: {e.request_info.url}")
+        except aiohttp.ClientConnectionError as e:
+            logging.error(f"Attempt {attempt + 1}: Connection error occurred: {e}")
+        except Exception as e:
+            logging.error(f"Attempt {attempt + 1}: An unexpected error occurred: {e}")
+
+        await asyncio.sleep(2)  # 재시도 전에 잠시 대기
+
+    raise Exception("Failed to get token after 3 attempts")
 
 async def get_object_list(token_id, container_name):
     """
