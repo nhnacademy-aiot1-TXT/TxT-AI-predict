@@ -38,6 +38,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name : env file
+      uses : appleboy/scp-action@master
       env:
         RABBITMQ_USER: ${{ secrets.RABBITMQ_USER }}
         RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
