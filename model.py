@@ -51,6 +51,8 @@ async def get_token():
     async with aiohttp.ClientSession() as session:
         async with session.post(token_url, json=req_body) as response:
             response.raise_for_status()
+            logging.info(req_body)
+            logging.info(token_url)
             return await response.json()
 
 async def test():
