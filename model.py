@@ -13,6 +13,7 @@
 
 import io
 import joblib
+import logging
 import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from config import TENANT_ID, USERNAME, PASSWORD, STORAGE_URL, AUTH_URL
@@ -21,6 +22,14 @@ import nest_asyncio
 nest_asyncio.apply()
 
 CONTAINER_NAME = 'TxT-model'
+
+#콘솔 로그 생성 및 설정
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
 
 async def get_token():
     """
@@ -43,6 +52,13 @@ async def get_token():
         async with session.post(token_url, json=req_body) as response:
             response.raise_for_status()
             return await response.json()
+
+async def test():
+    token = await get_token()
+    logging.info(token)
+    TOKEN_ID = token['access']['token']['id']
+    logging.info(TOKEN_ID)
+    
 
 async def get_object_list(token_id, container_name):
     """
