@@ -49,11 +49,23 @@ async def get_token():
         }
     }
     async with aiohttp.ClientSession() as session:
-        async with session.post(token_url, json=req_body) as response:
-            response.raise_for_status()
-            logging.info(req_body)
-            logging.info(token_url)
-            return await response.json()
+        try:
+            async with session.post(token_url, json=req_body) as response:
+                logging.info("Request body: %s", req_body)
+                logging.info("Request token_url: %s", token_url)
+                logging.info("Response status: %s", response.status)
+                response.raise_for_status()
+                response_json = await response.json()
+                logging.info("Response JSON: %s", response_json)
+                return response_json
+        except aiohttp.ClientResponseError as e:
+            logging.error("ClientResponseError: %s", e)
+            logging.error("Response text: %s", await response.text())
+            raise
+        except Exception as e:
+            logging.error("Exception: %s", e)
+            raise
+
 
 async def test():
     token = await get_token()
