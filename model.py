@@ -15,12 +15,13 @@ import io
 import joblib
 import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from config import TENANT_ID, USERNAME, PASSWORD, STORAGE_URL, AUTH_URL
+from config import TENANT_ID, USERNAME, PASSWORD, STORAGE_URL
 import nest_asyncio
 
 nest_asyncio.apply()
 
 CONTAINER_NAME = 'TxT-model'
+AUTH_URL = 'https://api-identity-infrastructure.nhncloudservice.com/v2.0'
 
 async def get_token():
     """

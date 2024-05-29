@@ -40,7 +40,6 @@ async def setup_rabbitmq():
     exchange = await channel.declare_exchange('txt.device.control', ExchangeType.DIRECT, durable=True)
     return connection, queue, exchange
 
-
 async def consume(queue, exchange, model_list):
     """
     큐에서 메시지를 소비하고 데이터를 처리하여 결과를 발행하고 저장하는 비동기 함수입니다.
@@ -99,7 +98,7 @@ async def process_data(data, model_list):
     if not model_list:
         return None, print({"deviceName": device_name_message, "result": "모델이 로드되지 않았습니다."})
 
-    # 디바이스가 추가에 따른 해당 모델로의 분기문 (ex. airCondition은 aircon model(list[0]), heater는 heater model(list[1]) 등...)
+    # 디바이스가 추가에 따른 해당 모델로의 분기문 (ex. airConditioner는 aircon model(list[0]), heater는 heater model(list[1]) 등...)
     if "airConditioner" in device_name_message:
         model = model_list[0]
     # elif "heater" in device_name:

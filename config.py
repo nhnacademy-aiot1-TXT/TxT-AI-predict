@@ -1,4 +1,8 @@
 import os
+from dotenv import load_dotenv
+
+# .env file load
+load_dotenv('.env')
 
 # 환경 변수 설정
 #RABBITMQ 설정
@@ -17,4 +21,3 @@ TENANT_ID = os.environ.get('TENANT_ID')
 USERNAME = os.environ.get('USERNAME')
 PASSWORD = os.environ.get('PASSWORD') 
 STORAGE_URL = os.environ.get('STORAGE_URL')
-AUTH_URL = 'https://api-identity-infrastructure.nhncloudservice.com/v2.0'
