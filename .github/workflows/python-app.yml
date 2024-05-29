@@ -5,12 +5,11 @@ name: Python application
 
 on:
   push:
-    branches: [ "main", "develop", "feature/modelLoad" ]
+    branches: [ "main", "develop" ]
   pull_request:
     branches:
     - main
     - develop
-    - feature/modelLoad
 
 jobs:
   build:
@@ -57,16 +56,4 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script_stop: true
         script: "~/startup.sh"
-      env:
-        RABBITMQ_USER: ${{ secrets.RABBITMQ_USER }}
-        RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
-        RABBITMQ_HOST: ${{ secrets.RABBITMQ_HOST }}
-        RABBITMQ_CONSUME_QUEUE: ${{ secrets.RABBITMQ_CONSUME_QUEUE }}
-        REDIS_HOST: ${{ secrets.REDIS_HOST }}
-        REDIS_PORT: ${{ secrets.REDIS_PORT }}
-        REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-        USERNAME: ${{ secrets.USERNAME }}
-        PASSWORD: ${{ secrets.PASSWORD }}
-        STORAGE_URL: ${{ secrets.STORAGE_URL }}
-        TENANT_ID : ${{ secrets.TENANT_ID }}
       
