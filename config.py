@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 
 # .env file load
-load_dotenv()
+load_dotenv('.env')
 
 # 환경 변수 설정
 #RABBITMQ 설정
