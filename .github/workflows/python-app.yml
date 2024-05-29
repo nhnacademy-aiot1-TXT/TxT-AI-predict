@@ -68,4 +68,5 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PASSWORD: ${{ secrets.PASSWORD }}
         STORAGE_URL: ${{ secrets.STORAGE_URL }}
+        TENANT_ID : ${{ secrets.TENANT_ID }}
       
