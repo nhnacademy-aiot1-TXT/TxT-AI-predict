@@ -50,22 +50,15 @@ async def get_token():
         }
     }
     async with aiohttp.ClientSession() as session:
-        try:
-            async with session.post(token_url, json=req_body) as response:
-                logging.info("Request body: %s", req_body)
-                logging.info("Request URL: %s", token_url)
-                logging.info("Response status: %s", response.status)
+        async with session.post(token_url, json=req_body) as response:
+            try:
                 response.raise_for_status()
-                response_json = await response.json()
-                logging.info("Response JSON: %s", response_json)
-                return response_json
-        except aiohttp.ClientResponseError as e:
-            logging.error("ClientResponseError: %s", e)
-            logging.error("Response text: %s", await response.text())
-            raise
-        except Exception as e:
-            logging.error("Exception: %s", e)
-            raise
+                return await response.json()
+            except aiohttp.ClientResponseError as e:
+                error_message = await response.text()
+                logging.error(f"HTTP error occurred: {e.status}, {e.message}, URL: {e.request_info.url}")
+                logging.error(f"Response text: {error_message}")
+                raise
 
 async def get_object_list(token_id, container_name):
     """
@@ -111,9 +104,9 @@ async def load_model():
                     model = joblib.load(model_bytes)
                     model_list.append(model)
             except aiohttp.ClientError as e:
-                print(f"클라이언트 연결 오류: {str(e)}")
+                logger.error(f"클라이언트 연결 오류: {str(e)}")
             except Exception as e:
-                print(f"모델 로드 중 오류 발생: {str(e)}")
+                logger.error(f"모델 로드 중 오류 발생: {str(e)}")
 
     return model_list
 
@@ -133,7 +126,7 @@ async def load_model_periodically():
         else:
             print("모델 로드 실패")
 
-    scheduler.add_job(loaded_models, 'cron', hour='11', minute='00')
+    scheduler.add_job(loaded_models, 'cron', hour='13', minute='30')
     scheduler.start()
 
 async def main():
