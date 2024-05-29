@@ -13,7 +13,6 @@
 
 import io
 import joblib
-import logging
 import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from config import TENANT_ID, USERNAME, PASSWORD, STORAGE_URL
@@ -23,14 +22,6 @@ nest_asyncio.apply()
 
 CONTAINER_NAME = 'TxT-model'
 AUTH_URL = 'https://api-identity-infrastructure.nhncloudservice.com/v2.0'
-
-#콘솔 로그 생성 및 설정
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
 
 async def get_token():
     """
@@ -51,14 +42,8 @@ async def get_token():
     }
     async with aiohttp.ClientSession() as session:
         async with session.post(token_url, json=req_body) as response:
-            try:
-                response.raise_for_status()
-                return await response.json()
-            except aiohttp.ClientResponseError as e:
-                error_message = await response.text()
-                logging.error(f"HTTP error occurred: {e.status}, {e.message}, URL: {e.request_info.url}")
-                logging.error(f"Response text: {error_message}")
-                raise
+            response.raise_for_status()
+            return await response.json()
 
 async def get_object_list(token_id, container_name):
     """
@@ -104,9 +89,9 @@ async def load_model():
                     model = joblib.load(model_bytes)
                     model_list.append(model)
             except aiohttp.ClientError as e:
-                logger.error(f"클라이언트 연결 오류: {str(e)}")
+                print(f"클라이언트 연결 오류: {str(e)}")
             except Exception as e:
-                logger.error(f"모델 로드 중 오류 발생: {str(e)}")
+                print(f"모델 로드 중 오류 발생: {str(e)}")
 
     return model_list
 
@@ -126,7 +111,7 @@ async def load_model_periodically():
         else:
             print("모델 로드 실패")
 
-    scheduler.add_job(loaded_models, 'cron', hour='11', minute='31')
+    scheduler.add_job(loaded_models, 'cron', hour='0', minute='30')
     scheduler.start()
 
 async def main():
