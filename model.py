@@ -126,7 +126,7 @@ async def load_model_periodically():
         else:
             print("모델 로드 실패")
 
-    scheduler.add_job(loaded_models, 'cron', hour='13', minute='30')
+    scheduler.add_job(loaded_models, 'cron', hour='11', minute='31')
     scheduler.start()
 
 async def main():
