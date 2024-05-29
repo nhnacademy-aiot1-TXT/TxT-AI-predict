@@ -65,8 +65,8 @@ jobs:
         REDIS_HOST: ${{ secrets.REDIS_HOST }}
         REDIS_PORT: ${{ secrets.REDIS_PORT }}
         REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-        TENANT_ID: ${{ secrets.TENANT_ID }}
         USERNAME: ${{ secrets.USERNAME }}
         PASSWORD: ${{ secrets.PASSWORD }}
         STORAGE_URL: ${{ secrets.STORAGE_URL }}
+        TENANT_ID : ${{ secrets.TENANT_ID }}
       
