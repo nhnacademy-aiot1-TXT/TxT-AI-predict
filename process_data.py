@@ -40,7 +40,6 @@ async def setup_rabbitmq():
     exchange = await channel.declare_exchange('txt.device.control', ExchangeType.DIRECT, durable=True)
     return connection, queue, exchange
 
-
 async def consume(queue, exchange, model_list):
     """
     큐에서 메시지를 소비하고 데이터를 처리하여 결과를 발행하고 저장하는 비동기 함수입니다.
