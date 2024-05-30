@@ -100,7 +100,7 @@ async def process_data(data, model_list):
         return None, print({"deviceName": device_name_message, "result": "모델이 로드되지 않았습니다."})
 
     # 디바이스가 추가에 따른 해당 모델로의 분기문 (ex. airConditioner는 aircon model(list[0]), heater는 heater model(list[1]) 등...)
-    if "airCondition" in device_name_message:
+    if "airconditioner" in device_name_message:
         model = model_list[0]
     # elif "heater" in device_name:
     #     model = model_list[1]
@@ -144,7 +144,7 @@ async def publish_result(exchange, pub_json, device_name_message):
         pub_json (str): 발행할 JSON 형태의 결과
         device_name_message (str): 디바이스 이름 메시지
     """
-    if "airCondition" in device_name_message:
+    if "airconditioner" in device_name_message:
         routing_key = 'txt.airconditioner'
     # elif "heater" in device_name:
     #     routing_key = 'txt.heater'
