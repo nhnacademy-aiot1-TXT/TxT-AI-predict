@@ -128,7 +128,7 @@ async def process_data(data, model_list):
         'indoorHumidity' : indoor_humidity_message,
         'outdoorTemperature' : temperature_message,
         'outdoorHumidity' : humidity_message,
-        'totalPeopleCount' : total_people_count_message,
+        'totalPeopleCount' : int(total_people_count_message),
         'result' : redis_result
     }
 
