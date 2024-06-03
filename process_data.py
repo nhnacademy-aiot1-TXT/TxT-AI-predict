@@ -80,7 +80,7 @@ async def process_data(data, model_list):
     total_people_count_message = float(data.get("class_a_total_people_count"))
 
     # unix_time > local_time_minute으로 변경(00시 기준)
-    time_object = datetime.fromtimestamp(date_time_message / 1000)
+    time_object = datetime.fromtimestamp(int(date_time_message) / 1000)
     time = time_object.hour * 60 + time_object.minute
     float(time)
     hour = time_object.hour
@@ -124,10 +124,10 @@ async def process_data(data, model_list):
         'place': place_message,
         'deviceName': device_name_message,
         'time': redis_time,
-        'indoorTemperature' : f"{indoor_temperature_message:0.2f}",
-        'indoorHumidity' : f"{indoor_humidity_message:.2f}",
-        'outdoorTemperature' : f"{temperature_message:.2f}",
-        'outdoorHumidity' : f"{humidity_message:.2f}",
+        'indoorTemperature' : f"{indoor_temperature_message:0.1f}",
+        'indoorHumidity' : f"{indoor_humidity_message:0.1f}",
+        'outdoorTemperature' : f"{temperature_message:0.1f}",
+        'outdoorHumidity' : f"{humidity_message:0.1f}",
         'totalPeopleCount' : int(total_people_count_message),
         'result' : redis_result
     }
