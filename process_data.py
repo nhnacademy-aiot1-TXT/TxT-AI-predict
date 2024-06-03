@@ -70,7 +70,6 @@ async def process_data(data, model_list):
     Returns:
         tuple: 처리된 데이터 필드, 발행할 JSON 형태의 결과를 포함하는 튜플
     """
-    print(data)
     place_message = data.get("place")
     device_name_message = data.get("deviceName")
     date_time_message = data.get("time")
