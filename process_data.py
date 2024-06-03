@@ -124,10 +124,10 @@ async def process_data(data, model_list):
         'place': place_message,
         'deviceName': device_name_message,
         'time': redis_time,
-        'indoorTemperature' : indoor_temperature_message,
-        'indoorHumidity' : indoor_humidity_message,
-        'outdoorTemperature' : temperature_message,
-        'outdoorHumidity' : humidity_message,
+        'indoorTemperature' : round(indoor_temperature_message, 2),
+        'indoorHumidity' : round(indoor_humidity_message, 2),
+        'outdoorTemperature' : round(temperature_message, 2),
+        'outdoorHumidity' : round(humidity_message, 2),
         'totalPeopleCount' : int(total_people_count_message),
         'result' : redis_result
     }
