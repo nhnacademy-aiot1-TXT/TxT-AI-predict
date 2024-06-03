@@ -70,6 +70,7 @@ async def process_data(data, model_list):
     Returns:
         tuple: 처리된 데이터 필드, 발행할 JSON 형태의 결과를 포함하는 튜플
     """
+    print(data)
     place_message = data.get("place")
     device_name_message = data.get("deviceName")
     date_time_message = data.get("time")
@@ -83,6 +84,7 @@ async def process_data(data, model_list):
     time_object = datetime.fromtimestamp(int(date_time_message) / 1000)
     time = time_object.hour * 60 + time_object.minute
     float(time)
+
     hour = time_object.hour
     minute = time_object.minute
     redis_time = f"{hour}시 {minute}분"
