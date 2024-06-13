@@ -40,6 +40,14 @@ async def setup_rabbitmq():
     exchange = await channel.declare_exchange('txt.device.control', ExchangeType.DIRECT, durable=True)
     return connection, queue, exchange
 
+async def get_data():
+    """
+    'device_power_status'에서 class_a_airconditioner의 true/false 상태 받아와서
+    같으면 publish 안하기
+    """
+    redis_value = r.hget('device_power_status', 'class_a_airconditioner')
+    return redis_value
+
 async def consume(queue, exchange, model_list):
     """
     큐에서 메시지를 소비하고 데이터를 처리하여 결과를 발행하고 저장하는 비동기 함수입니다.
@@ -56,7 +64,11 @@ async def consume(queue, exchange, model_list):
                 data = json.loads(decode_message)
                 field_values, pub_json = await process_data(data, model_list)
 
-                await publish_result(exchange, pub_json, data.get("deviceName"))
+                redis_result = await get_data()
+
+                if redis_result is None or redis_result.upper() != pub_json['value']:
+                    await publish_result(exchange, pub_json, data.get("deviceName"))
+    
                 await save_data(field_values)
 
 async def process_data(data, model_list):
@@ -110,7 +122,7 @@ async def process_data(data, model_list):
 
     # 0,1 결과를 boolen으로 publish
     if predictions[0] == 0:
-        pub_result = False 
+        pub_result = False
     else:
         pub_result = True 
 
