@@ -53,5 +53,6 @@ jobs:
           script: |
             docker stop TxT-AI-predict || true
             docker rm -f TxT-AI-predict || true
+            docker rmi $(docker images ${{ secrets.DOCKER_REPO }} -q)
             docker pull ${{ secrets.DOCKER_REPO }}
             docker run -d --name TxT-AI-predict ${{ secrets.DOCKER_REPO }}
