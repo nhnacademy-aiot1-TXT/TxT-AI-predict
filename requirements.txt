@@ -8,3 +8,4 @@ apscheduler
 scikit-learn
 nest_asyncio
 python-dotenv
+xgboost
